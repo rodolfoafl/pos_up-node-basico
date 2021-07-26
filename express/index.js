@@ -46,11 +46,25 @@ app.get("/users", (req, res) => {
 
 //Adiciona um ususário
 app.post("/users", (req, res) => {
-  let data = req.body;
+  const data = req.body;
+  if (data && data.login && data.password) {
+    const { login, password } = data;
 
-  users.push(data);
-
-  res.send("Usuário inserido com sucesso.");
+    const newId = users[users.length - 1].id + 1;
+    let newUser = {
+      id: newId,
+      login,
+      password,
+    };
+    users.push(newUser);
+    return res.status(200).send("Usuário inserido com sucesso.");
+  } else {
+    return res
+      .status(404)
+      .send(
+        "Dados insuficientes para inclusão de novo usuário! Tente novamente."
+      );
+  }
 });
 
 //Atualiza um usuário
@@ -112,11 +126,25 @@ app.get("/books/total-quantity", (req, res) => {
 
 //Adiciona um livro
 app.post("/books", (req, res) => {
-  let data = req.body;
+  const data = req.body;
+  if (data && data.name && data.quantity) {
+    const { name, quantity } = data;
 
-  books.push(data);
-
-  res.send("Livro inserido com sucesso.");
+    const newId = books[books.length - 1].id + 1;
+    let newBook = {
+      id: newId,
+      name,
+      quantity,
+    };
+    books.push(newBook);
+    return res.status(200).send("Livro inserido com sucesso.");
+  } else {
+    return res
+      .status(404)
+      .send(
+        "Dados insuficientes para inclusão de novo livro! Tente novamente."
+      );
+  }
 });
 
 //Atualiza um livro
