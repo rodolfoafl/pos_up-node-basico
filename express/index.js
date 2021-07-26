@@ -38,16 +38,13 @@ let books = [
 /**
  * USERS
  */
+
+//Lista todos os usuários
 app.get("/users", (req, res) => {
-  const { login } = req.query;
-  if (login) {
-    const filteredUsers = users.filter((u) => u.login.includes(login));
-    res.status(200).json(filteredUsers);
-  } else {
-    res.status(200).json(users);
-  }
+  res.status(200).json(users);
 });
 
+//Adiciona um ususário
 app.post("/users", (req, res) => {
   let data = req.body;
 
@@ -56,21 +53,54 @@ app.post("/users", (req, res) => {
   res.send("Usuário inserido com sucesso.");
 });
 
-app.put("/users", (req, res) => {
-  res.send("Usuário alterado com sucesso.");
+//Atualiza um usuário
+app.put("/users/:id", (req, res) => {
+  const { login, password } = req.body;
+  let id = req.params.id;
+  let toUpdate = users.find((v) => v.id === Number(id));
+  if (toUpdate) {
+    if (login) {
+      toUpdate.login = login;
+    }
+    if (password) {
+      toUpdate.password = password;
+    }
+    return res.status(200).json("Usuário alterado com sucesso");
+  }
+  return res
+    .status(404)
+    .json("Usuário não encontrado! Tente novamente com outro ID.");
 });
 
-app.delete("/users", (req, res) => {
-  res.send("Usuário removido com sucesso.");
+//Remove um usuário
+app.delete("/users/:id", (req, res) => {
+  let id = req.params.id;
+  let toDelete = users.find((v) => v.id === Number(id));
+  if (toDelete) {
+    users = users.filter((v) => v.id !== Number(id));
+    return res.status(200).json("Usuário removido com sucesso");
+  }
+  return res
+    .status(404)
+    .json("Usuário não encontrado! Tente novamente com outro ID.");
 });
 
 /**
  * BOOKS
  */
+
+//Lista todos os livros OU filtra por nome, usando query
 app.get("/books", (req, res) => {
-  res.status(200).json(books);
+  const { name } = req.query;
+  if (name) {
+    const filteredBooks = books.filter((u) => u.name.includes(name));
+    res.status(200).json(filteredBooks);
+  } else {
+    res.status(200).json(filteredBooks);
+  }
 });
 
+//Exibe a quantidade total de livros
 app.get("/books/total-quantity", (req, res) => {
   const totalQuantity = books.reduce((acc, book) => {
     return acc + book.quantity;
@@ -80,6 +110,7 @@ app.get("/books/total-quantity", (req, res) => {
     .send(`Quantidade total de livros no acervo: ${totalQuantity}`);
 });
 
+//Adiciona um livro
 app.post("/books", (req, res) => {
   let data = req.body;
 
@@ -88,6 +119,7 @@ app.post("/books", (req, res) => {
   res.send("Livro inserido com sucesso.");
 });
 
+//Atualiza um livro
 app.put("/books/:id", (req, res) => {
   const { name, quantity } = req.body;
   let id = req.params.id;
@@ -106,6 +138,7 @@ app.put("/books/:id", (req, res) => {
     .json("Livro não encontrado! Tente novamente com outro ID.");
 });
 
+//Remove um livro
 app.delete("/books/:id", (req, res) => {
   let id = req.params.id;
   let toDelete = books.find((v) => v.id === Number(id));
