@@ -17,16 +17,21 @@ let users = [
   },
 ];
 
-let vehicles = [
+let books = [
   {
     id: 1,
-    model: "Gol",
-    brand: "VW",
+    name: "Duna",
+    quantity: 4,
   },
   {
     id: 2,
-    model: "Ka",
-    brand: "Ford",
+    name: "Messias de Duna",
+    quantity: 2,
+  },
+  {
+    id: 3,
+    name: "Filhos de Duna",
+    quantity: 1,
   },
 ];
 
@@ -34,7 +39,13 @@ let vehicles = [
  * USERS
  */
 app.get("/users", (req, res) => {
-  res.status(200).json(users);
+  const { login } = req.query;
+  if (login) {
+    const filteredUsers = users.filter((u) => u.login.includes(login));
+    res.status(200).json(filteredUsers);
+  } else {
+    res.status(200).json(users);
+  }
 });
 
 app.post("/users", (req, res) => {
@@ -54,48 +65,57 @@ app.delete("/users", (req, res) => {
 });
 
 /**
- * VEHICLES
+ * BOOKS
  */
-app.get("/vehicles", (req, res) => {
-  res.status(200).json(vehicles);
+app.get("/books", (req, res) => {
+  res.status(200).json(books);
 });
 
-app.post("/vehicles", (req, res) => {
+app.get("/books/total-quantity", (req, res) => {
+  const totalQuantity = books.reduce((acc, book) => {
+    return acc + book.quantity;
+  }, 0);
+  res
+    .status(200)
+    .send(`Quantidade total de livros no acervo: ${totalQuantity}`);
+});
+
+app.post("/books", (req, res) => {
   let data = req.body;
 
-  vehicles.push(data);
+  books.push(data);
 
-  res.send("Veículo inserido com sucesso.");
+  res.send("Livro inserido com sucesso.");
 });
 
-app.put("/vehicles/:id", (req, res) => {
-  const { model, brand } = req.body;
+app.put("/books/:id", (req, res) => {
+  const { name, quantity } = req.body;
   let id = req.params.id;
-  let toUpdate = vehicles.find((v) => v.id === Number(id));
+  let toUpdate = books.find((v) => v.id === Number(id));
   if (toUpdate) {
-    if (model) {
-      toUpdate.model = model;
+    if (name) {
+      toUpdate.name = name;
     }
-    if (brand) {
-      toUpdate.brand = brand;
+    if (quantity) {
+      toUpdate.quantity = quantity;
     }
-    return res.status(200).json("Veículo alterado com sucesso");
+    return res.status(200).json("Livro alterado com sucesso");
   }
   return res
     .status(404)
-    .json("Veículo não encontrado! Tente novamente com outro ID.");
+    .json("Livro não encontrado! Tente novamente com outro ID.");
 });
 
-app.delete("/vehicles/:id", (req, res) => {
+app.delete("/books/:id", (req, res) => {
   let id = req.params.id;
-  let toDelete = vehicles.find((v) => v.id === Number(id));
+  let toDelete = books.find((v) => v.id === Number(id));
   if (toDelete) {
-    vehicles = vehicles.filter((v) => v.id !== Number(id));
-    return res.status(200).json("Veículo removido com sucesso");
+    books = books.filter((v) => v.id !== Number(id));
+    return res.status(200).json("Livro removido com sucesso");
   }
   return res
     .status(404)
-    .json("Veículo não encontrado! Tente novamente com outro ID.");
+    .json("Livro não encontrado! Tente novamente com outro ID.");
 });
 
 app.listen(port, () => {
