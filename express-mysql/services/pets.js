@@ -77,7 +77,7 @@ const validateUpdate = (pet) => {
   }
 
   if (pet.age && !Number.isInteger(pet.age)) {
-    messages.push("Age it not a number");
+    messages.push("Age is not a number");
   }
 
   if (messages.length) {
@@ -98,16 +98,16 @@ const update = async (id, pet) => {
 
   let message = `Error in updating pet: ${result.info}`;
 
-  let updatePet = {};
+  let updatedPet = {};
   if (result.affectedRows) {
     message = "Pet information updated successfully";
-    updatePet = await db.query(
+    updatedPet = await db.query(
       "SELECT name, age, image FROM pet WHERE ID = ?",
       [id]
     );
   }
 
-  return { message, updatePet };
+  return { message, updatedPet };
 };
 
 module.exports = {
