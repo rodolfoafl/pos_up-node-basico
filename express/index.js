@@ -4,19 +4,6 @@ const port = 3000;
 
 app.use(express.json());
 
-let users = [
-  {
-    id: 1,
-    login: "rodolfoafl",
-    password: "123456",
-  },
-  {
-    id: 2,
-    login: "rodolfoleal",
-    password: "321654",
-  },
-];
-
 let books = [
   {
     id: 1,
@@ -36,81 +23,17 @@ let books = [
 ];
 
 /**
- * USERS
- */
-
-//Lista todos os usuários
-app.get("/users", (req, res) => {
-  res.status(200).json(users);
-});
-
-//Adiciona um ususário
-app.post("/users", (req, res) => {
-  const data = req.body;
-  if (data && data.login && data.password) {
-    const { login, password } = data;
-
-    const newId = users[users.length - 1].id + 1;
-    let newUser = {
-      id: newId,
-      login,
-      password,
-    };
-    users.push(newUser);
-    return res.status(200).send("Usuário inserido com sucesso.");
-  } else {
-    return res
-      .status(404)
-      .send(
-        "Dados insuficientes para inclusão de novo usuário! Tente novamente."
-      );
-  }
-});
-
-//Atualiza um usuário
-app.put("/users/:id", (req, res) => {
-  const { login, password } = req.body;
-  let id = req.params.id;
-  let toUpdate = users.find((v) => v.id === Number(id));
-  if (toUpdate) {
-    if (login) {
-      toUpdate.login = login;
-    }
-    if (password) {
-      toUpdate.password = password;
-    }
-    return res.status(200).json("Usuário alterado com sucesso");
-  }
-  return res
-    .status(404)
-    .json("Usuário não encontrado! Tente novamente com outro ID.");
-});
-
-//Remove um usuário
-app.delete("/users/:id", (req, res) => {
-  let id = req.params.id;
-  let toDelete = users.find((v) => v.id === Number(id));
-  if (toDelete) {
-    users = users.filter((v) => v.id !== Number(id));
-    return res.status(200).json("Usuário removido com sucesso");
-  }
-  return res
-    .status(404)
-    .json("Usuário não encontrado! Tente novamente com outro ID.");
-});
-
-/**
  * BOOKS
  */
 
-//Lista todos os livros OU filtra por nome, usando query
+//Lista todos os livros OU filtra por nome, usando query (?name=)
 app.get("/books", (req, res) => {
   const { name } = req.query;
   if (name) {
     const filteredBooks = books.filter((u) => u.name.includes(name));
     res.status(200).json(filteredBooks);
   } else {
-    res.status(200).json(filteredBooks);
+    res.status(200).json(books);
   }
 });
 
@@ -159,11 +82,11 @@ app.put("/books/:id", (req, res) => {
     if (quantity) {
       toUpdate.quantity = quantity;
     }
-    return res.status(200).json("Livro alterado com sucesso");
+    return res.status(200).send("Livro alterado com sucesso");
   }
   return res
     .status(404)
-    .json("Livro não encontrado! Tente novamente com outro ID.");
+    .send("Livro não encontrado! Tente novamente com outro ID.");
 });
 
 //Remove um livro
@@ -172,11 +95,11 @@ app.delete("/books/:id", (req, res) => {
   let toDelete = books.find((v) => v.id === Number(id));
   if (toDelete) {
     books = books.filter((v) => v.id !== Number(id));
-    return res.status(200).json("Livro removido com sucesso");
+    return res.status(200).send("Livro removido com sucesso");
   }
   return res
     .status(404)
-    .json("Livro não encontrado! Tente novamente com outro ID.");
+    .send("Livro não encontrado! Tente novamente com outro ID.");
 });
 
 app.listen(port, () => {
