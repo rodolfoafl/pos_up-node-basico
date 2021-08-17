@@ -2,7 +2,7 @@ const db = require("./db");
 const helper = require("../utils/helper");
 
 const read = async () => {
-  const rows = await db.query("SELECT id, name, age, image FROM animal");
+  const rows = await db.query("SELECT id, name, age FROM animal");
   const data = helper.emptyOrRows(rows);
 
   return {
@@ -43,8 +43,8 @@ const create = async (animal) => {
   validateCreate(animal);
 
   const result = await db.query(
-    "INSERT INTO animal (name, age, image) VALUES (?, ?, ?)",
-    [animal.name, animal.age, animal.image || null]
+    "INSERT INTO animal (name, age) VALUES (?, ?)",
+    [animal.name, animal.age || null]
   );
 
   let message = "";
@@ -114,7 +114,7 @@ const update = async (id, animal) => {
   if (result.affectedRows) {
     message = "Animal information updated successfully";
     updatedAnimal = await db.query(
-      "SELECT name, age, image FROM animal WHERE ID = ?",
+      "SELECT name, age FROM animal WHERE ID = ?",
       [id]
     );
     return { message, updatedAnimal };
