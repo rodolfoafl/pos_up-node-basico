@@ -3,7 +3,7 @@ const helper = require("../utils/helper");
 
 const read = async () => {
   const rows = await db.query(
-    "SELECT id, firstname, lastname, crmv FROM veterinarians"
+    "SELECT id, firstname, lastname, crmv FROM veterinarian"
   );
   const data = helper.emptyOrRows(rows);
 
